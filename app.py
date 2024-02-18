@@ -91,7 +91,7 @@ elif choice == "ML Classification":
         st.info("This is the ML Model")
         st.dataframe(compare_df)
         st.info("This is the best model")
-        best_model
+        st.write(best_model)
 
         # Save the best model
         save_model(best_model, "best_model_classification")
@@ -103,52 +103,64 @@ elif choice == "ML Classification":
 
 elif choice == "Download":
     # Download option
-    if os.path.exists("model_type.txt"):
-        with open("model_type.txt", 'r') as f:
-            last_model_type = f.read().strip()
-    else:
-        last_model_type = None
 
-    # Check the model type and provide download button accordingly
-    if last_model_type == 'regression':
-        with open("best_model_regression.pkl", 'rb') as f:
-            st.markdown("### Download the trained model file (Only for Regression Problem) ###")
-            st.download_button("Download", f, "trained_model_regression.pkl")
-    elif last_model_type == 'classification':
-        with open("best_model_classification.pkl", 'rb') as f:
-            st.markdown("### Download the trained model file (Only for Classification Problem) ###")
-            st.download_button("Download", f, "trained_model_classification.pkl")
-    else:
-        st.warning("Please train a model first.")
+    # Check if the user has trained either a regression or classification model
+    regression_model_exists = os.path.exists("best_model_regression.pkl")
+    classification_model_exists = os.path.exists("best_model_classification.pkl")
 
-    # Provide instructions for using the trained model in code
-    st.markdown("""
-    Note: If you want to use the trained model in your code use the below code for it:
-    ```python
-    import pickle
-    with open("trained_model_regression.pkl", 'rb') as f:
-        model = pickle.load(f)
+    if regression_model_exists or classification_model_exists:
+        # At least one model has been trained, so display the download section
+
+        if os.path.exists("model_type.txt"):
+            with open("model_type.txt", 'r') as f:
+                last_model_type = f.read().strip()
+        else:
+            last_model_type = None
+
+        # Check the model type and provide download button accordingly
+        if last_model_type == 'regression' and regression_model_exists:
+            with open("best_model_regression.pkl", 'rb') as f:
+                st.markdown("### Download the trained model file (Only for Regression Problem) ###")
+                st.download_button("Download", f, "trained_model_regression.pkl")
+        elif last_model_type == 'classification' and classification_model_exists:
+            with open("best_model_classification.pkl", 'rb') as f:
+                st.markdown("### Download the trained model file (Only for Classification Problem) ###")
+                st.download_button("Download", f, "trained_model_classification.pkl")
+        else:
+            st.warning("Please train a model first.")
+
+        # Provide instructions for using the trained model in code
+        st.markdown("""
+        Note: If you want to use the trained model in your code use the below code for it:
+        ```python
+        import pickle
+        with open("trained_model_regression.pkl", 'rb') as f:
+            model = pickle.load(f)
+            model.predict(X)
+        ```
+
+        or 
+
+        ```python
+        from pycaret.regression import load_model
+        model = load_model("trained_model_regression")
         model.predict(X)
-    ```
+        ```
 
-    or 
+        or 
 
-    ```python
-    from pycaret.regression import load_model
-    model = load_model("trained_model_regression")
-    model.predict(X)
-    ```
+        ```python
+        from pycaret.classification import load_model
+        model = load_model("trained_model_classification")
+        model.predict(X)
+        ```
 
-    or 
+        Note this may change based on the model you have trained.
+        """)
+    else:
+        # No model has been trained, so display a warning message
+        st.warning("Please train a model (either regression or classification) first before downloading.")
 
-    ```python
-    from pycaret.classification import load_model
-    model = load_model("trained_model_classification")
-    model.predict(X)
-    ```
-
-    Note this may change based on the model you have trained.
-    """)
 
 # Add a footer
 st.markdown("""
