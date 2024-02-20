@@ -51,3 +51,10 @@ streamlit run app.py
 ## Note
 - Ensure you have trained a model before attempting to download it.
 - The application provides flexibility for regression tasks only. The application is still under development for classification tasks.
+
+## Contributing
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature_branch`.
+3. Commit your changes: `git commit -m 'Add new feature'`.
+4. Push to the branch: `git push origin feature_branch`.
+5. Open a pull request.
